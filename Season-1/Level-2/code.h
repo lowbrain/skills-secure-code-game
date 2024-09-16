@@ -24,7 +24,12 @@
 // purpose of this level, please assume that the private (implementation specific) sections 
 // of this file, would not be known to the non-privileged users of this application
 
+// 簡単にするために、このアプリケーションのプライベート（実装固有）部分とパブリック（API）部分の両方が、このヘッダーファイルの中にまとめられている。
+// 現実の世界では、パブリック（API）部分のみがここに提示されることが期待される。
+// したがって、このレベルでは、このファイルのプライベート（実装固有の）セクションは、このアプリケーションの非特権ユーザーには知られないと仮定してください。
+
 // Internal counter of user accounts
+// ユーザーアカウントの内部カウンター
 int userid_next = 0;
 
 // The following structure is implementation-speicific and it's supposed to be unknown 
@@ -80,7 +85,7 @@ bool update_setting(int user_id, const char *index, const char *value) {
         return false;
 
     v = strtol(value, &endptr, 10);
-    if (*endptr || i >= SETTINGS_COUNT)
+    if (*endptr || i >= SETTINGS_COUNT || i < 0)
         return false;
     accounts[user_id]->setting[i] = v;
     return true;
