@@ -12,22 +12,30 @@ Follow the instructions below to get started:
 '''
 
 from collections import namedtuple
+from decimal import *
 
-Order = namedtuple('Order', 'id, items')
-Item = namedtuple('Item', 'type, description, amount, quantity')
+Order = namedtuple('Order', 'id, items') # Orderという型の宣言
+Item = namedtuple('Item', 'type, description, amount, quantity') # Itemという型の宣言
 
 def validorder(order: Order):
-    net = 0
+    net = Decimal("0.00")
+    total = Decimal("0")
 
     for item in order.items:
-        if item.type == 'payment':
-            net += item.amount
-        elif item.type == 'product':
-            net -= item.amount * item.quantity
+        if item.type == 'payment': # 支払だったら？
+            net = net + Decimal(str(item.amount))
+        elif item.type == 'product': # 製品だったら？
+            if not isinstance(item.quantity, int): # quantityが整数ではなかったら？
+                return "Order ID: %s - invalid order" % order.id
+            net = net - Decimal(str(item.amount)) * Decimal(str(item.quantity))
+            total = total + Decimal(str(item.amount)) * Decimal(str(item.quantity))
         else:
             return "Invalid item type: %s" % item.type
 
     if net != 0:
-        return "Order ID: %s - Payment imbalance: $%0.2f" % (order.id, net)
+        return "Order ID: %s - Payment imbalance: $%0.2f" % (order.id, net) # 請求額に対し支払った額が一致していない
     else:
-        return "Order ID: %s - Full payment received!" % order.id
+        if total > 100000:
+            return "Total amount payable for an order exceeded"
+        else:
+            return "Order ID: %s - Full payment received!" % order.id # 問題なし！
